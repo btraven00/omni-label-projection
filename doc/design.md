@@ -14,18 +14,18 @@ tools/viash2ob.py <task_dir> --dataset NAME=URL [--include a,b] [--exclude c]
 
 ```mermaid
 flowchart TD
-    task["OpenProblems task repo<br/>src/{data_processors,methods,control_methods,metrics}/*/config.vsh.yaml<br/>_viash.yaml"]
-    task -->|"viash config view --format json"| cfg["merged component config<br/>name, namespace, info.type,<br/>file args (direction), params (defaults),<br/>engines[docker].image + setup"]
-    cfg --> ids["ob ids by convention<br/>input_X / output_X → X<br/>output → prediction | score<br/>input → dataset"]
-    cfg --> env["environment key = (image, setup)<br/>one software_environment per distinct key,<br/>ghcr tag of the first member"]
-    cfg -->|"viash build --runner executable<br/>-c '.engines := [{type: native}]'"| exe["modules/&lt;name&gt;/viash/&lt;name&gt;<br/>standalone CLI, script inlined,<br/>no container logic"]
-    ids --> stages["stage contracts<br/>process_dataset → process<br/>method, control_method → methods<br/>metric → metrics<br/>inputs/outputs = union over members"]
-    ids --> wrap["modules/&lt;name&gt;/run.sh<br/>INPUTS, OUTPUTS, DROP maps"]
+    task["OpenProblems task repo<br/>src/*/NAME/config.vsh.yaml<br/>_viash.yaml"]
+    task -- "viash config view" --> cfg["merged component config<br/>name, namespace, info.type<br/>file args with direction, params with defaults<br/>docker image and setup"]
+    cfg --> ids["ob ids by convention<br/>input_X and output_X become X<br/>bare output becomes prediction or score<br/>bare input becomes dataset"]
+    cfg --> env["environment key: image plus setup<br/>one software_environment per distinct key<br/>ghcr tag of the first member"]
+    cfg -- "viash build, native engine" --> exe["modules/NAME/viash/NAME<br/>standalone CLI, script inlined<br/>no container logic"]
+    ids --> stages["stage contracts<br/>process_dataset to process<br/>method and control_method to methods<br/>metric to metrics<br/>inputs and outputs: union over members"]
+    ids --> wrap["modules/NAME/run.sh<br/>INPUTS, OUTPUTS, DROP maps"]
     stages --> wrap
     exe --> wrap
-    stages --> plan["plan.yaml<br/>data → process → methods → metrics"]
+    stages --> plan["plan.yaml<br/>data, process, methods, metrics"]
     env --> plan
-    wrap --> entry["omnibenchmark.yaml<br/>entrypoints: {name: modules/name/run.sh}"]
+    wrap --> entry["omnibenchmark.yaml<br/>one entrypoint per component"]
     loader["modules/dataset/run.sh<br/>downloads the common dataset"] --> entry
     loader --> plan
 ```
@@ -71,10 +71,10 @@ sequenceDiagram
 
     ob->>smk: resolve nodes, write Snakefile
     smk->>apt: exec in env_knn image
-    apt->>run: --output_dir D --name knn<br/>--output prediction=/abs/knn.prediction.h5ad<br/>--train /abs/train.h5ad --test /abs/test.h5ad<br/>--solution /abs/solution.h5ad [--param v ...]
-    Note over run: drop --output_dir/--name<br/>--output id=P → --output P<br/>--train → --input_train, --test → --input_test<br/>--solution ∈ DROP → dropped<br/>params pass through
-    run->>vx: --input_train ... --input_test ... --output ... [--param v]
-    vx->>py: par = {...}, meta = {name: "knn"}
+    apt->>run: --output_dir D --name knn<br/>--output prediction=/abs/knn.prediction.h5ad<br/>--train /abs/train.h5ad --test /abs/test.h5ad<br/>--solution /abs/solution.h5ad --param v
+    Note over run: drop --output_dir and --name<br/>--output id=P becomes --output P<br/>--train becomes --input_train, --test becomes --input_test<br/>--solution is in DROP, dropped<br/>params pass through
+    run->>vx: --input_train ... --input_test ... --output ... --param v
+    vx->>py: par and meta dicts, meta.name = knn
     py-->>smk: /abs/knn.prediction.h5ad
 ```
 
