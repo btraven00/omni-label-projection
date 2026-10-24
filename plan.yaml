@@ -1,0 +1,151 @@
+id: task_label_projection
+description: 'Label projection: OpenProblems components run as ob modules (viash2ob)'
+version: '0.1'
+benchmarker: viash2ob
+api_version: 0.8.0
+software_backend: apptainer
+software_environments:
+  env_process_dataset:
+    description: openproblems/base_python:1 + setup, shared by process_dataset, majority_vote, true_labels
+    apptainer: docker://ghcr.io/openproblems-bio/task_label_projection/data_processors/process_dataset:build_main
+  env_cellmapper_linear:
+    description: openproblems/base_python:1 + setup, shared by cellmapper_linear
+    apptainer: docker://ghcr.io/openproblems-bio/task_label_projection/methods/cellmapper_linear:build_main
+  env_knn:
+    description: openproblems/base_python:1 + setup, shared by knn
+    apptainer: docker://ghcr.io/openproblems-bio/task_label_projection/methods/knn:build_main
+  env_logistic_regression:
+    description: openproblems/base_python:1 + setup, shared by logistic_regression, mlp, naive_bayes,
+      accuracy, f1
+    apptainer: docker://ghcr.io/openproblems-bio/task_label_projection/methods/logistic_regression:build_main
+  env_xgboost:
+    description: openproblems/base_python:1 + setup, shared by xgboost
+    apptainer: docker://ghcr.io/openproblems-bio/task_label_projection/methods/xgboost:build_main
+  env_random_labels:
+    description: openproblems/base_python:1 + setup, shared by random_labels
+    apptainer: docker://ghcr.io/openproblems-bio/task_label_projection/control_methods/random_labels:build_main
+stages:
+- id: data
+  modules:
+  - id: cxg_immune_cell_atlas
+    software_environment: env_process_dataset
+    repository:
+      url: .
+      commit: HEAD
+      entrypoint: dataset
+    parameters:
+    - url: https://openproblems-data.s3.amazonaws.com/resources_test/common/cxg_immune_cell_atlas/dataset.h5ad
+  outputs:
+  - id: dataset
+    path: '{module.id}.dataset.h5ad'
+- id: process
+  inputs:
+  - dataset
+  modules:
+  - id: process_dataset
+    software_environment: env_process_dataset
+    repository:
+      url: .
+      commit: HEAD
+      entrypoint: process_dataset
+    parameters:
+    - obs_label: cell_type
+      obs_batch: batch
+      num_test_batches: 1
+  outputs:
+  - id: train
+    path: '{module.id}.train.h5ad'
+  - id: test
+    path: '{module.id}.test.h5ad'
+  - id: solution
+    path: '{module.id}.solution.h5ad'
+- id: methods
+  inputs:
+  - train
+  - test
+  - solution
+  modules:
+  - id: cellmapper_linear
+    software_environment: env_cellmapper_linear
+    repository:
+      url: .
+      commit: HEAD
+      entrypoint: cellmapper_linear
+    parameters:
+    - fallback_representation: fast_cca
+      kernel_method: hnoca
+      n_neighbors: 30
+  - id: knn
+    software_environment: env_knn
+    repository:
+      url: .
+      commit: HEAD
+      entrypoint: knn
+  - id: logistic_regression
+    software_environment: env_logistic_regression
+    repository:
+      url: .
+      commit: HEAD
+      entrypoint: logistic_regression
+  - id: mlp
+    software_environment: env_logistic_regression
+    repository:
+      url: .
+      commit: HEAD
+      entrypoint: mlp
+    parameters:
+    - hidden_layer_sizes: 100;100
+      max_iter: 1000
+  - id: naive_bayes
+    software_environment: env_logistic_regression
+    repository:
+      url: .
+      commit: HEAD
+      entrypoint: naive_bayes
+  - id: xgboost
+    software_environment: env_xgboost
+    repository:
+      url: .
+      commit: HEAD
+      entrypoint: xgboost
+  - id: majority_vote
+    software_environment: env_process_dataset
+    repository:
+      url: .
+      commit: HEAD
+      entrypoint: majority_vote
+  - id: random_labels
+    software_environment: env_random_labels
+    repository:
+      url: .
+      commit: HEAD
+      entrypoint: random_labels
+  - id: true_labels
+    software_environment: env_process_dataset
+    repository:
+      url: .
+      commit: HEAD
+      entrypoint: true_labels
+  outputs:
+  - id: prediction
+    path: '{module.id}.prediction.h5ad'
+- id: metrics
+  inputs:
+  - solution
+  - prediction
+  modules:
+  - id: accuracy
+    software_environment: env_logistic_regression
+    repository:
+      url: .
+      commit: HEAD
+      entrypoint: accuracy
+  - id: f1
+    software_environment: env_logistic_regression
+    repository:
+      url: .
+      commit: HEAD
+      entrypoint: f1
+  outputs:
+  - id: score
+    path: '{module.id}.score.h5ad'

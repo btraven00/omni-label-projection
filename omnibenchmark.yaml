@@ -1,0 +1,14 @@
+entrypoints:
+  accuracy: modules/accuracy/run.sh
+  cellmapper_linear: modules/cellmapper_linear/run.sh
+  dataset: modules/dataset/run.sh
+  f1: modules/f1/run.sh
+  knn: modules/knn/run.sh
+  logistic_regression: modules/logistic_regression/run.sh
+  majority_vote: modules/majority_vote/run.sh
+  mlp: modules/mlp/run.sh
+  naive_bayes: modules/naive_bayes/run.sh
+  process_dataset: modules/process_dataset/run.sh
+  random_labels: modules/random_labels/run.sh
+  true_labels: modules/true_labels/run.sh
+  xgboost: modules/xgboost/run.sh
