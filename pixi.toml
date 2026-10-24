@@ -9,9 +9,9 @@ apptainer = "*"
 git = "*"
 
 [pypi-dependencies]
-# omnibenchmark fix/shell-quote-params: parameter values are shell-quoted,
-# which the Viash multiple-valued arguments (e.g. "100;100") need.
-omnibenchmark = { git = "https://github.com/btraven00/omnibenchmark.git", rev = "0479df52a6fdf28218620cfd40e404c00e42293f" }
+# omnibenchmark feat/viash-adaptor: api 0.8.0 named outputs (feat/named-outputs) plus the
+# shell-quoting fix the Viash multiple-valued arguments (e.g. "100;100") need.
+omnibenchmark = { git = "https://github.com/btraven00/omnibenchmark.git", rev = "079c0468c72d2cc7704ae42c5a2397e19799cc7a" }
 
 [tasks]
 run = "ob run plan.yaml --dirty -k --cores 2"

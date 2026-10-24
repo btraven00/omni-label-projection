@@ -69,7 +69,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/zstd-1.5.7-hb78ec9c_7.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.10.23-hbd8a1cb_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026e-h5d301ff_0.conda
-      - pypi: git+https://github.com/btraven00/omnibenchmark.git?rev=0479df52a6fdf28218620cfd40e404c00e42293f#0479df52a6fdf28218620cfd40e404c00e42293f
+      - pypi: git+https://github.com/btraven00/omnibenchmark.git?rev=079c0468c72d2cc7704ae42c5a2397e19799cc7a#079c0468c72d2cc7704ae42c5a2397e19799cc7a
       - pypi: https://files.pythonhosted.org/packages/02/10/5da547df7a391dcde17f59520a231527b8571e6f46fc8efb02ccb370ab12/docutils-0.22.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/05/d1/8952806fbf9583004ab479d8f58a9496c3d35f6b6009ddd458bdd9978eaf/dpath-2.2.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0e/d0/f4e9894c8aaf37efe3bf1afe15ee3cf0546d82b2713a589e266ee47bf2ef/snakemake_interface_scheduler_plugins-2.0.2-py3-none-any.whl
@@ -986,9 +986,9 @@ packages:
   run_exports: {}
   size: 119208
   timestamp: 1792758382821
-- pypi: git+https://github.com/btraven00/omnibenchmark.git?rev=0479df52a6fdf28218620cfd40e404c00e42293f#0479df52a6fdf28218620cfd40e404c00e42293f
+- pypi: git+https://github.com/btraven00/omnibenchmark.git?rev=079c0468c72d2cc7704ae42c5a2397e19799cc7a#079c0468c72d2cc7704ae42c5a2397e19799cc7a
   name: omnibenchmark
-  version: 0.0.post869+g0479df52a
+  version: 0.0.post879+g079c0468c
   requires_dist:
   - click>=8.1.7
   - python-dateutil>=2.9.0.post0

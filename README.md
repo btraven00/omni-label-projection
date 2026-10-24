@@ -7,5 +7,7 @@ from the task's Viash components (see omnibenchmark design 013).
 - `omnibenchmark.yaml` — one entrypoint per component (one repo, many modules)
 - `plan.yaml` — stages derived from `src/api` contracts; environments are the ghcr images OpenProblems publishes, one per distinct image+setup
 
-Run: `ob run plan.yaml --dirty --cores 2` (`--dirty` because modules are referenced by local path `.`).
+Run: `pixi run run` (`ob run plan.yaml --dirty -k --cores 2`; `--dirty` because modules are referenced by local path `.`).
+`pixi.toml` pins omnibenchmark to `feat/viash-adaptor`: api 0.8.0 named outputs are not in main yet, and the
+`;`-joined Viash arguments need its shell-quoting fix (`fix/shell-quote-params` carries that fix alone, on main).
 Current subset: CPU methods only; R and GPU methods excluded for now.
