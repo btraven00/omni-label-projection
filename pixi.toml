@@ -13,5 +13,11 @@ git = "*"
 # shell-quoting fix the Viash multiple-valued arguments (e.g. "100;100") need.
 omnibenchmark = { git = "https://github.com/btraven00/omnibenchmark.git", rev = "079c0468c72d2cc7704ae42c5a2397e19799cc7a" }
 
+# Keep Apptainer's cache and scratch under the repo: SIF conversion needs a few GB,
+# and the machine's /tmp or /home is often the small disk. Put the repo on the big one.
+[activation.env]
+APPTAINER_CACHEDIR = "$PIXI_PROJECT_ROOT/.apptainer/cache"
+APPTAINER_TMPDIR = "$PIXI_PROJECT_ROOT/.apptainer/tmp"
+
 [tasks]
-run = "ob run plan.yaml --dirty -k --cores 2"
+run = "mkdir -p $APPTAINER_TMPDIR && ob run plan.yaml --dirty -k --cores 2"

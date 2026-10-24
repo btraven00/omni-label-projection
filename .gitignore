@@ -1,4 +1,5 @@
 out/
 .snakemake/
 .pixi/
+.apptainer/
 out.run.log
