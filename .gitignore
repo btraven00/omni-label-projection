@@ -1,2 +1,4 @@
 out/
 .snakemake/
+.pixi/
+out.run.log

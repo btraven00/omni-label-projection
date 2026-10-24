@@ -1,0 +1,17 @@
+[workspace]
+name = "omni-label-projection"
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64"]
+
+[dependencies]
+python = "3.12.*"
+apptainer = "*"
+git = "*"
+
+[pypi-dependencies]
+# omnibenchmark fix/shell-quote-params: parameter values are shell-quoted,
+# which the Viash multiple-valued arguments (e.g. "100;100") need.
+omnibenchmark = { git = "https://github.com/btraven00/omnibenchmark.git", rev = "0479df52a6fdf28218620cfd40e404c00e42293f" }
+
+[tasks]
+run = "ob run plan.yaml --dirty -k --cores 2"
